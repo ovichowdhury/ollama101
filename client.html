@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DeepSeek Chat Client</title>
+    <title>LLM Chat Client</title>
+
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -65,10 +66,183 @@
       #message-input button:hover {
         background-color: #0056b3;
       }
+
+      /* Navbar Styles */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #333;
+        padding: 15px 20px;
+        color: white;
+      }
+
+      .navbar .logo {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .navbar .logo img {
+        height: 40px;
+        margin-right: 10px;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .nav-links li {
+        margin: 0 15px;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: white;
+        font-size: 16px;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: #00bcd4;
+      }
+
+      /* Mobile Menu Button */
+      .menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      /* Mobile Menu */
+      .mobile-menu {
+        display: none;
+        flex-direction: column;
+        background: #444;
+        padding: 10px;
+      }
+
+      .mobile-menu a {
+        text-decoration: none;
+        color: white;
+        padding: 10px;
+        display: block;
+        border-bottom: 1px solid #555;
+      }
+
+      .mobile-menu a:hover {
+        background: #00bcd4;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .menu-btn {
+          display: block;
+        }
+
+        .mobile-menu.show {
+          display: flex;
+        }
+      }
+
+      /* Introduction Section */
+      .intro {
+        text-align: center;
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+      }
+
+      .intro h1 {
+        font-size: 28px;
+        color: #333;
+      }
+
+      .intro p {
+        font-size: 16px;
+        color: #555;
+        margin: 15px 0;
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .intro {
+          width: 90%;
+          padding: 30px;
+        }
+      }
     </style>
   </head>
   <body>
-    <div id="chat-container"></div>
+    <nav class="navbar">
+      <!-- Logo -->
+      <a href="#" class="logo">
+        <img
+          src="https://www.erainfotechbd.com/images/front/ERA-Logo.png"
+          alt="Erainfotech Ltd"
+        />
+      </a>
+
+      <!-- Desktop Links -->
+      <ul class="nav-links">
+        <li>
+          <a href="https://www.erainfotechbd.com/pages/service?item=588"
+            >Services</a
+          >
+        </li>
+        <li>
+          <a href="https://www.erainfotechbd.com/pages/about?item=565">About</a>
+        </li>
+        <li>
+          <a href="https://www.erainfotechbd.com/contacts?item=589">Contact</a>
+        </li>
+      </ul>
+
+      <!-- Mobile Menu Button -->
+      <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="https://www.erainfotechbd.com/pages/service?item=588"
+        >Services</a
+      >
+      <a href="https://www.erainfotechbd.com/pages/about?item=565">About</a>
+      <a href="https://www.erainfotechbd.com/contacts?item=589">Contact</a>
+    </div>
+
+    <script>
+      function toggleMenu() {
+        document.getElementById("mobile-menu").classList.toggle("show");
+      }
+    </script>
+
+    <div id="chat-container">
+      <div style="display: flex; justify-content: center">
+        <div class="intro">
+          <h1>LLM Client by ERA</h1>
+          <p>
+            Chat with an intelligent AI assistant. Ask questions, get instant
+            answers, and explore endless possibilities.
+          </p>
+        </div>
+      </div>
+    </div>
     <div id="message-input">
       <input type="text" id="message" placeholder="Type your message here..." />
       <button onclick="sendMessage()">Send</button>
@@ -87,7 +261,7 @@
       socket.on("response", (data) => {
         const element = document.getElementById(data.id);
         if (element) {
-          element.textContent += data.message;
+          element.innerHTML = markdownToHTML(element.innerHTML + data.message);
         } else {
           const messageElement = document.createElement("div");
           messageElement.setAttribute("id", data.id);
@@ -110,6 +284,17 @@
           socket.emit("message", { message });
           messageInput.value = "";
         }
+      }
+
+      function markdownToHTML(markdown) {
+        return markdown
+          .replace(/^# (.*$)/gm, "<h1>$1</h1>") // # Heading 1
+          .replace(/^## (.*$)/gm, "<h2>$1</h2>") // ## Heading 2
+          .replace(/^### (.*$)/gm, "<h3>$1</h3>") // ### Heading 3
+          .replace(/\*\*(.*?)\*\*/gm, "<b>$1</b>") // **Bold**
+          .replace(/\*(.*?)\*/gm, "<i>$1</i>") // *Italic*
+          .replace(/`(.*?)`/gm, "<code>$1</code>") // `Inline Code`
+          .replace(/\n/g, "<br>"); // New lines
       }
     </script>
   </body>

@@ -5,8 +5,8 @@ from flask_cors import CORS
 import uuid
 
 app = Flask(__name__)
-CORS(app)
-socketio = SocketIO(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 @app.route('/')
 def serve_index():
@@ -22,7 +22,8 @@ def handle_connect():
 def handle_message(data):
     user_message = data['message']
     stream = chat(
-        model='deepseek-r1:1.5b',
+        # model='deepseek-r1:1.5b',
+        model='llama3.2',
         messages=[{'role': 'user', 'content': user_message}],
         stream=True,
     )
