@@ -29,7 +29,7 @@ def handle_message(data):
     )
     random_id = str(uuid.uuid4())
     for chunk in stream:
-        emit('response', {'message': chunk['message']['content'], 'id': random_id}, broadcast=True)
+        emit('response', {'message': chunk['message']['content'], 'id': random_id}, broadcast=False)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)
